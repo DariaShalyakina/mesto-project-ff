@@ -1,5 +1,4 @@
 const cohortId = "wff-cohort-6";
-const token = "ecf17080-347b-483b-a076-f4b38ef76ef6";
 
 // Функция для изменения текста кнопки
 function setSaveButtonText(text) {
@@ -13,7 +12,7 @@ function setSaveButtonText(text) {
 export function fetchUserInfo() {
     return fetch(`https://mesto.nomoreparties.co/v1/${cohortId}/users/me`, {
         headers: {
-            authorization: token
+            authorization: 'ecf17080-347b-483b-a076-f4b38ef76ef6'
         }
     })
         .then(res => res.json())
@@ -35,7 +34,7 @@ export function fetchUserInfo() {
 export function fetchCards() {
     const fetchPromise = fetch(`https://mesto.nomoreparties.co/v1/${cohortId}/cards`, {
         headers: {
-            authorization: token
+            authorization: 'ecf17080-347b-483b-a076-f4b38ef76ef6'
         }
     })
         .then(res => res.json())
@@ -65,7 +64,7 @@ export function updateUserInfo(name, about) {
     return fetch(`https://mesto.nomoreparties.co/v1/${cohortId}/users/me`, {
         method: 'PATCH',
         headers: {
-            authorization: token,
+            authorization: 'ecf17080-347b-483b-a076-f4b38ef76ef6',
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
@@ -78,13 +77,11 @@ export function updateUserInfo(name, about) {
             // Обработка успешного ответа от сервера
             // Возвращаем надпись на кнопке обратно
             setSaveButtonText('Сохранить');
+            return data;
         })
         .catch(error => {
             // Обработка ошибки при обновлении данных пользователя
             console.error("Ошибка при обновлении данных пользователя:", error);
-
-            // Возвращаем надпись на кнопке обратно
-            setSaveButtonText('Сохранить');
         });
 }
 
@@ -97,7 +94,7 @@ export function fetchAddNewCard(name, link) {
     return fetch(`https://mesto.nomoreparties.co/v1/${cohortId}/cards`, {
         method: "POST",
         headers: {
-            authorization: token,
+            authorization: 'ecf17080-347b-483b-a076-f4b38ef76ef6',
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
@@ -107,15 +104,12 @@ export function fetchAddNewCard(name, link) {
     })
         .then(res => res.json())
         .then(data => {
-            console.log("Новая карточка добавлена:", data);
             // Возвращаем надпись на кнопке обратно
             setSaveButtonText('Сохранить');
             return data;
         })
         .catch(error => {
             console.error("Ошибка при добавлении карточки:", error);
-            // Возвращаем надпись на кнопке обратно
-            setSaveButtonText('Сохранить');
         });
 }
 
@@ -124,7 +118,7 @@ export function fetchDeleteCard(cardId) {
     return fetch(`https://mesto.nomoreparties.co/v1/${cohortId}/cards/${cardId}`, {
         method: 'DELETE',
         headers: {
-            authorization: token,
+            authorization: 'ecf17080-347b-483b-a076-f4b38ef76ef6',
             'Content-Type': 'application/json'
         }
     })
@@ -145,7 +139,7 @@ export function fetchLikeCard(cardId) {
     return fetch(`https://mesto.nomoreparties.co/v1/${cohortId}/cards/likes/${cardId}`, {
         method: 'PUT',
         headers: {
-            authorization: token,
+            authorization: 'ecf17080-347b-483b-a076-f4b38ef76ef6',
             'Content-Type': 'application/json'
         }
     })
@@ -165,7 +159,7 @@ export function fetchUnlikeCard(cardId) {
     return fetch(`https://mesto.nomoreparties.co/v1/${cohortId}/cards/likes/${cardId}`, {
         method: 'DELETE',
         headers: {
-            authorization: token,
+            authorization: 'ecf17080-347b-483b-a076-f4b38ef76ef6',
             'Content-Type': 'application/json'
         }
     })
@@ -189,24 +183,26 @@ export function fetchUpdateAvatar(link) {
     return fetch(`https://mesto.nomoreparties.co/v1/${cohortId}/users/me/avatar`, {
         method: 'PATCH',
         headers: {
-            authorization: token,
+            authorization: 'ecf17080-347b-483b-a076-f4b38ef76ef6',
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
             avatar: link
         })
     })
-        .then(res => res.json())
+        .then((res) => {
+            if (res.ok) {
+                return res.json();
+            }
+            return Promise.reject(`Ошибка: ${res.status}`);
+        })
         .then(data => {
-            // Обработка успешного ответа от сервера
-            console.log("Аватар успешно обновлен:", data);
             // Возвращаем надпись на кнопке обратно
             setSaveButtonText('Да');
+            return data;
         })
         .catch(error => {
             // Обработка ошибки при обновлении данных пользователя
             console.error("Ошибка при обновлении аватара:", error);
-            // Возвращаем надпись на кнопке обратно
-            setSaveButtonText('Да');
         });
 }
