@@ -5,3 +5,8 @@
   background: #fff;
   padding: 25px 20px;
 }
+
+.card__like {
+  display: flex;
+  flex-direction: column;
+}
