@@ -1,11 +1,6 @@
-export const validationSettings = {
-    formSelector: '.popup__form',
-    inputSelector: '.popup__input',
-    submitButtonSelector: '.popup__button',
-    inputErrorClass: 'popup__input_type_error',
-    errorClass: 'popup__error-visible'
-}
+import { validationSettings } from "./validationConfig";
 
+//Валидация полей
 function showInputError(formElement, inputElement, errorMessage, inputErrorClass, errorClass) {
     const errorElement = formElement.querySelector(`.${inputElement.id}-error`);
     inputElement.classList.add(inputErrorClass);
@@ -82,10 +77,12 @@ export function enableValidation(validationSettings) {
 export function clearValidation(formElement, validationSettings) {
     const inputList = Array.from(formElement.querySelectorAll(validationSettings.inputSelector));
     const submitButton = formElement.querySelector(validationSettings.submitButtonSelector);
-  
+   
     inputList.forEach((inputElement) => {
       hideInputError(formElement, inputElement, validationSettings.inputErrorClass, validationSettings.errorClass);
     });
+
+    formElement.reset(); // Сброс значений полей формы
   
     toggleButtonState(inputList, submitButton);
 }

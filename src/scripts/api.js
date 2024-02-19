@@ -1,70 +1,40 @@
 const cohortId = "wff-cohort-6";
+const baseUrl = `https://mesto.nomoreparties.co/v1/${cohortId}`;
+const authorization = 'ecf17080-347b-483b-a076-f4b38ef76ef6';
 
-// Функция для изменения текста кнопки
-function setSaveButtonText(text) {
-    const saveButtons = document.querySelectorAll('.popup__button');
-    saveButtons.forEach(button => {
-        button.textContent = text;
-    });
-}
+const handleResponse = (res) => {
+    if (res.ok) {
+        return res.json();
+    }
+    return Promise.reject(`Ошибка: ${res.status}`);
+};
 
 // Загрузка информации о пользователе с сервера
 export function fetchUserInfo() {
-    return fetch(`https://mesto.nomoreparties.co/v1/${cohortId}/users/me`, {
+    return fetch(`${baseUrl}/users/me`, {
         headers: {
-            authorization: 'ecf17080-347b-483b-a076-f4b38ef76ef6'
+            authorization
         }
     })
-        .then(res => res.json())
-        .then(data => {
-            const profileImage = document.querySelector('.profile__image');
-            const profileTitle = document.querySelector('.profile__title');
-            const profileDescription = document.querySelector('.profile__description');
-
-            profileImage.style.backgroundImage = `url(${data.avatar})`;
-            profileTitle.textContent = data.name;
-            profileDescription.textContent = data.about;
-        })
-        .catch(error => {
-            console.error("Ошибка при получении данных пользователя:", error);
-        });
+        .then(handleResponse);
 }
 
 // Загрузка карточек с сервера
 export function fetchCards() {
-    const fetchPromise = fetch(`https://mesto.nomoreparties.co/v1/${cohortId}/cards`, {
+    return fetch(`${baseUrl}/cards`, {
         headers: {
-            authorization: 'ecf17080-347b-483b-a076-f4b38ef76ef6'
+            authorization
         }
     })
-        .then(res => res.json())
-        .then(cards => {
-            return cards.map(card => {
-                const data = {
-                    ...card,
-                    owner: {
-                        ...card.owner
-                    }
-                };
-                return data;
-            });
-        });
-
-    return fetchPromise.catch(error => {
-        console.error("Ошибка при получении карточек:", error);
-    });
+        .then(handleResponse);
 }
 
 // Редактирование профиля
 export function updateUserInfo(name, about) {
-
-    // Изменяем текст кнопки на "Сохранение..."
-    setSaveButtonText('Сохранение...');
-
-    return fetch(`https://mesto.nomoreparties.co/v1/${cohortId}/users/me`, {
+    return fetch(`${baseUrl}/users/me`, {
         method: 'PATCH',
         headers: {
-            authorization: 'ecf17080-347b-483b-a076-f4b38ef76ef6',
+            authorization,
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
@@ -72,29 +42,15 @@ export function updateUserInfo(name, about) {
             about: about
         })
     })
-        .then(res => res.json())
-        .then(data => {
-            // Обработка успешного ответа от сервера
-            // Возвращаем надпись на кнопке обратно
-            setSaveButtonText('Сохранить');
-            return data;
-        })
-        .catch(error => {
-            // Обработка ошибки при обновлении данных пользователя
-            console.error("Ошибка при обновлении данных пользователя:", error);
-        });
+        .then(handleResponse);
 }
 
 //Добавление новой карточки
 export function fetchAddNewCard(name, link) {
-
-    // Изменяем текст кнопки на "Сохранение..."
-    setSaveButtonText('Сохранение...');
-
-    return fetch(`https://mesto.nomoreparties.co/v1/${cohortId}/cards`, {
+    return fetch(`${baseUrl}/cards`, {
         method: "POST",
         headers: {
-            authorization: 'ecf17080-347b-483b-a076-f4b38ef76ef6',
+            authorization,
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
@@ -102,85 +58,53 @@ export function fetchAddNewCard(name, link) {
             link: link
         })
     })
-        .then(res => res.json())
+        .then(handleResponse)
         .then(data => {
-            // Возвращаем надпись на кнопке обратно
-            setSaveButtonText('Сохранить');
             return data;
-        })
-        .catch(error => {
-            console.error("Ошибка при добавлении карточки:", error);
         });
 }
 
 //Удаление карточки
 export function fetchDeleteCard(cardId) {
-    return fetch(`https://mesto.nomoreparties.co/v1/${cohortId}/cards/${cardId}`, {
+    return fetch(`${baseUrl}/cards/${cardId}`, {
         method: 'DELETE',
         headers: {
-            authorization: 'ecf17080-347b-483b-a076-f4b38ef76ef6',
+            authorization,
             'Content-Type': 'application/json'
         }
     })
-        .then(res => {
-            if (res.ok) {
-                return res.json();
-            }
-            return Promise.reject(`Error: ${res.status}`);
-        })
-        .catch(error => {
-            console.error('Ошибка при удалении карточки:', error);
-        });
+    .then(handleResponse);
 }
 
 // Постановка и снятие лайка
 // Постановка лайка
 export function fetchLikeCard(cardId) {
-    return fetch(`https://mesto.nomoreparties.co/v1/${cohortId}/cards/likes/${cardId}`, {
+    return fetch(`${baseUrl}/cards/likes/${cardId}`, {
         method: 'PUT',
         headers: {
-            authorization: 'ecf17080-347b-483b-a076-f4b38ef76ef6',
+            authorization,
             'Content-Type': 'application/json'
         }
     })
-        .then(res => {
-            if (res.ok) {
-                return res.json();
-            }
-            return Promise.reject(`Error: ${res.status}`);
-        })
-        .catch(err => {
-            console.log(`Error: ${err}`);
-        });
+    .then(handleResponse);
 }
 
 // Снятие лайка
 export function fetchUnlikeCard(cardId) {
-    return fetch(`https://mesto.nomoreparties.co/v1/${cohortId}/cards/likes/${cardId}`, {
+    return fetch(`${baseUrl}/cards/likes/${cardId}`, {
         method: 'DELETE',
         headers: {
-            authorization: 'ecf17080-347b-483b-a076-f4b38ef76ef6',
+            authorization,
             'Content-Type': 'application/json'
         }
     })
-        .then(res => {
-            if (res.ok) {
-                return res.json();
-            }
-            return Promise.reject(`Error: ${res.status}`);
-        })
-        .catch(err => {
-            console.log(`Error: ${err}`);
-        });
+    .then(handleResponse);
 }
 
 //Обновление аватара пользователя
 export function fetchUpdateAvatar(link) {
 
-    // Изменяем текст кнопки на "Сохранение..."
-    setSaveButtonText('Сохранение...');
-
-    return fetch(`https://mesto.nomoreparties.co/v1/${cohortId}/users/me/avatar`, {
+    return fetch(`${baseUrl}/users/me/avatar`, {
         method: 'PATCH',
         headers: {
             authorization: 'ecf17080-347b-483b-a076-f4b38ef76ef6',
@@ -190,19 +114,8 @@ export function fetchUpdateAvatar(link) {
             avatar: link
         })
     })
-        .then((res) => {
-            if (res.ok) {
-                return res.json();
-            }
-            return Promise.reject(`Ошибка: ${res.status}`);
-        })
+    .then(handleResponse)
         .then(data => {
-            // Возвращаем надпись на кнопке обратно
-            setSaveButtonText('Да');
             return data;
-        })
-        .catch(error => {
-            // Обработка ошибки при обновлении данных пользователя
-            console.error("Ошибка при обновлении аватара:", error);
         });
 }

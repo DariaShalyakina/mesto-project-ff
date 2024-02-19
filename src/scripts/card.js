@@ -63,24 +63,12 @@ export function deleteCard(cardElement, data) {
 
 // Функция лайка карточки
 export function likeCard(likeButton, likeCountElement, data) {
-    if (likeButton.classList.contains('card__like-button_is-active')) {
-        fetchUnlikeCard(data._id)
-            .then(() => {
-                likeButton.classList.remove('card__like-button_is-active');
-                likeCountElement.textContent = parseInt(likeCountElement.textContent) - 1;
-            })
-            .catch((err) => {
-                console.log(`Ошибка: ${err}`);
-            });
-    } else {
-        fetchLikeCard(data._id)
-            .then(() => {
-                likeButton.classList.add('card__like-button_is-active');
-                likeCountElement.textContent = parseInt(likeCountElement.textContent) + 1;
-            })
-            .catch((err) => {
-                console.log(`Ошибка: ${err}`);
-            });
-    }
+    const likeMethod = likeButton.classList.contains('card__like-button_is-active') ? fetchUnlikeCard : fetchLikeCard;
+    likeMethod(data._id)
+        .then((res) => {
+            likeCountElement.textContent = res.likes.length;
+            likeButton.classList.toggle("card__like-button_is-active");
+        })
+        .catch(err => console.log(err));
 }
 
