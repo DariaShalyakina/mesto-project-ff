@@ -1,2 +1,2 @@
 Welcome to my project Mesto
-(https://github.com/DariaShalyakina/mesto-project-ff.git)
+(https://dariashalyakina.github.io/mesto-project-ff/)
